@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication1.Migrations
 {
-    public partial class mig_1 : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,11 +46,18 @@ namespace WebApplication1.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Baslik = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Icerik = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Icerik = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    KisiId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Makaleler", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Makaleler_Kisiler_KisiId",
+                        column: x => x.KisiId,
+                        principalTable: "Kisiler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,13 +88,15 @@ namespace WebApplication1.Migrations
                 name: "IX_KonuMakale_MakalelerId",
                 table: "KonuMakale",
                 column: "MakalelerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Makaleler_KisiId",
+                table: "Makaleler",
+                column: "KisiId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Kisiler");
-
             migrationBuilder.DropTable(
                 name: "KonuMakale");
 
@@ -96,6 +105,9 @@ namespace WebApplication1.Migrations
 
             migrationBuilder.DropTable(
                 name: "Makaleler");
+
+            migrationBuilder.DropTable(
+                name: "Kisiler");
         }
     }
 }
