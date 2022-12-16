@@ -25,12 +25,14 @@
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Makale" asp-action="Index">Makaleler</a>
 						</li>
+						
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Makale" asp-action="Create">Makale Ekle</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="Kisi" asp-action="Index" >Kişi</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Kisi" asp-action="Details" asp-route-id="1">Hakkımda</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="Konu" asp-action="Index" >Konu</a>
 						</li>
+						@Html.Partial("_LoginPartial")
 					</ul>
 				</div>
 			</div>
