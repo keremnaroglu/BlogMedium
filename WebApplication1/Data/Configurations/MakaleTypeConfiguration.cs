@@ -18,6 +18,9 @@ namespace WebApplication1.Data.Configurations
 
             builder.HasOne(x => x.Kisi).WithMany(a => a.Makaleler).HasForeignKey(x => x.KisiId).OnDelete(DeleteBehavior.Restrict);
 
+            builder.Property(x => x.CreateDate).HasConversion(typeof(DateTime)).IsRequired(false).HasDefaultValue(DateTime.Now);
+
+
         }
     }
 }

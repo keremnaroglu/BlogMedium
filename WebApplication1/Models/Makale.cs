@@ -14,6 +14,7 @@ namespace WebApplication1.Models
 
         public Kisi Kisi { get; set; }
         public int KisiId { get; set; }
+        public DateTime CreateDate { get; set; }
 
 
         public Makale()
