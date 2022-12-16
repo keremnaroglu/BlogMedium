@@ -22,7 +22,7 @@ namespace WebApplication1.Data.Configurations
 
             builder.HasKey(x => x.Id);
 
-            builder.HasMany(x => x.Makaleler).WithOne(k => k.Kisi).HasForeignKey(k => k.KisiId);
+            builder.HasMany(x => x.Makaleler).WithOne(k => k.Kisi).HasForeignKey(k => k.KisiId).OnDelete(DeleteBehavior.Restrict);
 
 
         }

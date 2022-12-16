@@ -12,11 +12,12 @@ namespace WebApplication1.Data.Configurations
 
             builder.Property(x => x.Baslik).IsRequired().HasMaxLength(30);
 
-            builder.Property(x => x.Icerik).IsRequired().HasMaxLength(50);
+            builder.Property(x => x.Icerik).IsRequired().HasMaxLength(500);
 
             builder.HasKey(x => x.Id);
 
-            builder.HasOne(x => x.Kisi).WithMany(a => a.Makaleler).HasForeignKey(x => x.KisiId);
+            builder.HasOne(x => x.Kisi).WithMany(a => a.Makaleler).HasForeignKey(x => x.KisiId).OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
