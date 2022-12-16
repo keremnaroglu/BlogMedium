@@ -1,6 +1,8 @@
-﻿namespace WebApplication1.Models
+﻿using WebApplication1.Abstract;
+
+namespace WebApplication1.Models
 {
-    public class Konu
+    public class Konu : IEntity
     {
         public int Id { get; set; }
 

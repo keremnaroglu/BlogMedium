@@ -1,6 +1,8 @@
-﻿namespace WebApplication1.Models
+﻿using WebApplication1.Abstract;
+
+namespace WebApplication1.Models
 {
-    public class Makale
+    public class Makale : IEntity
     {
         public int Id { get; set; }
 
