@@ -7,7 +7,7 @@ namespace WebApplication1.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=LAPTOP-LN6LO128\\SQLSERVER2019;Database=BlogDB;Integrated Security = True");
+            optionsBuilder.UseSqlServer("Server=.;Database=BlogDB;Integrated Security = True");
         }
 
         public DbSet<Kisi> Kisiler { get; set; }

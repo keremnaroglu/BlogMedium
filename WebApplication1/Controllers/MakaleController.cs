@@ -6,37 +6,35 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.IRepositories;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
     public class MakaleController : Controller
     {
-        private readonly Context _context;
+        private readonly IMakaleRepository _repo;
 
-        public MakaleController(Context context)
+        public int _id = 2;
+        public MakaleController(IMakaleRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Makale
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var context = _context.Makaleler.Include(m => m.Kisi);
-            return View(await context.ToListAsync());
+            return View(_repo.GetAll().ToList());
         }
 
         // GET: Makale/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Makaleler == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
-
-            var makale = await _context.Makaleler
-                .Include(m => m.Kisi)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Makale makale = _repo.GetById(id);
             if (makale == null)
             {
                 return NotFound();
@@ -46,9 +44,9 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Makale/Create
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
-            ViewData["KisiId"] = new SelectList(_context.Kisiler, "Id", "Id");
+            ViewData["KisiId"] = _id;
             return View();
         }
 
@@ -61,28 +59,25 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(makale);
-                await _context.SaveChangesAsync();
+                _repo.Create(makale);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KisiId"] = new SelectList(_context.Kisiler, "Id", "Id", makale.KisiId);
             return View(makale);
         }
 
         // GET: Makale/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Makaleler == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var makale = await _context.Makaleler.FindAsync(id);
+            Makale makale = _repo.GetById(id);
             if (makale == null)
             {
                 return NotFound();
             }
-            ViewData["KisiId"] = new SelectList(_context.Kisiler, "Id", "Id", makale.KisiId);
             return View(makale);
         }
 
@@ -102,12 +97,11 @@ namespace WebApplication1.Controllers
             {
                 try
                 {
-                    _context.Update(makale);
-                    await _context.SaveChangesAsync();
+                    _repo.Update(makale);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MakaleExists(makale.Id))
+                    if (_repo.GetById(id) == null)
                     {
                         return NotFound();
                     }
@@ -118,26 +112,22 @@ namespace WebApplication1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KisiId"] = new SelectList(_context.Kisiler, "Id", "Id", makale.KisiId);
             return View(makale);
         }
 
         // GET: Makale/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Makaleler == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var makale = await _context.Makaleler
-                .Include(m => m.Kisi)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Makale makale = _repo.GetById(id);
             if (makale == null)
             {
                 return NotFound();
             }
-
             return View(makale);
         }
 
@@ -146,23 +136,17 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Makaleler == null)
+            if (_repo.GetAll() == null)
             {
                 return Problem("Entity set 'Context.Makaleler'  is null.");
             }
-            var makale = await _context.Makaleler.FindAsync(id);
+            Makale makale = _repo.GetById(id);
             if (makale != null)
             {
-                _context.Makaleler.Remove(makale);
+                _repo.Delete(makale);
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool MakaleExists(int id)
-        {
-          return _context.Makaleler.Any(e => e.Id == id);
         }
     }
 }

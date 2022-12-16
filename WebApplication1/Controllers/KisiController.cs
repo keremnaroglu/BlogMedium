@@ -6,35 +6,35 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.IRepositories;
 using WebApplication1.Models;
+using WebApplication1.Repositories;
 
 namespace WebApplication1.Controllers
 {
     public class KisiController : Controller
     {
-        private readonly Context _context;
+        private readonly IKisiRepository _repo;
 
-        public KisiController(Context context)
+        public KisiController(IKisiRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Kisi
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-              return View(await _context.Kisiler.ToListAsync());
+            return View(_repo.GetAll().ToList());
         }
 
         // GET: Kisi/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Kisiler == null)
+            if (id == null || _repo.GetAll()==null)
             {
                 return NotFound();
             }
-
-            var kisi = await _context.Kisiler
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Kisi kisi = _repo.GetById(id);
             if (kisi == null)
             {
                 return NotFound();
@@ -58,8 +58,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(kisi);
-                await _context.SaveChangesAsync();
+                _repo.Create(kisi);
                 return RedirectToAction(nameof(Index));
             }
             return View(kisi);
@@ -68,12 +67,11 @@ namespace WebApplication1.Controllers
         // GET: Kisi/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Kisiler == null)
+            if (id == null || _repo.GetAll()==null)
             {
                 return NotFound();
             }
-
-            var kisi = await _context.Kisiler.FindAsync(id);
+            Kisi kisi = _repo.GetById(id);
             if (kisi == null)
             {
                 return NotFound();
@@ -97,12 +95,11 @@ namespace WebApplication1.Controllers
             {
                 try
                 {
-                    _context.Update(kisi);
-                    await _context.SaveChangesAsync();
+                    _repo.Update(kisi);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KisiExists(kisi.Id))
+                    if (_repo.GetById(id)==null)
                     {
                         return NotFound();
                     }
@@ -119,13 +116,12 @@ namespace WebApplication1.Controllers
         // GET: Kisi/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Kisiler == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var kisi = await _context.Kisiler
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Kisi kisi = _repo.GetById(id);
             if (kisi == null)
             {
                 return NotFound();
@@ -139,23 +135,16 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Kisiler == null)
+            if ( _repo.GetAll() == null)
             {
                 return Problem("Entity set 'Context.Kisiler'  is null.");
             }
-            var kisi = await _context.Kisiler.FindAsync(id);
+            Kisi kisi = _repo.GetById(id);
             if (kisi != null)
             {
-                _context.Kisiler.Remove(kisi);
+                _repo.Delete(kisi);
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool KisiExists(int id)
-        {
-          return _context.Kisiler.Any(e => e.Id == id);
         }
     }
 }

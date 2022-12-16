@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication1.Migrations
 {
-    public partial class initial : Migration
+    public partial class dbcreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,7 +19,7 @@ namespace WebApplication1.Migrations
                     Soyad = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Resim = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Resim = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +47,8 @@ namespace WebApplication1.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Baslik = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Icerik = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    KisiId = table.Column<int>(type: "int", nullable: false)
+                    KisiId = table.Column<int>(type: "int", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

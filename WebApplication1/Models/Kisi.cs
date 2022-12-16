@@ -14,7 +14,7 @@ namespace WebApplication1.Models
 
         public string? Aciklama { get; set; }
 
-        public byte[] Resim { get; set; }
+        public byte[]? Resim { get; set; }
 
         public ICollection<Makale> Makaleler { get; set; }
 

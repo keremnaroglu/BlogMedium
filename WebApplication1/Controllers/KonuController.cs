@@ -6,35 +6,34 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.IRepositories;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
     public class KonuController : Controller
     {
-        private readonly Context _context;
+        private readonly IKonuRepository _repo;
 
-        public KonuController(Context context)
+        public KonuController(IKonuRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Konu
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-              return View(await _context.Konular.ToListAsync());
+            return View(_repo.GetAll().ToList());
         }
 
         // GET: Konu/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Konular == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
-
-            var konu = await _context.Konular
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Konu konu = _repo.GetById(id);
             if (konu == null)
             {
                 return NotFound();
@@ -58,8 +57,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(konu);
-                await _context.SaveChangesAsync();
+                _repo.Create(konu);
                 return RedirectToAction(nameof(Index));
             }
             return View(konu);
@@ -68,12 +66,11 @@ namespace WebApplication1.Controllers
         // GET: Konu/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Konular == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
-
-            var konu = await _context.Konular.FindAsync(id);
+            Konu konu = _repo.GetById(id);
             if (konu == null)
             {
                 return NotFound();
@@ -97,12 +94,11 @@ namespace WebApplication1.Controllers
             {
                 try
                 {
-                    _context.Update(konu);
-                    await _context.SaveChangesAsync();
+                    _repo.Update(konu);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KonuExists(konu.Id))
+                    if (_repo.GetById(id) == null)
                     {
                         return NotFound();
                     }
@@ -119,13 +115,12 @@ namespace WebApplication1.Controllers
         // GET: Konu/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Konular == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var konu = await _context.Konular
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Konu konu = _repo.GetById(id);
             if (konu == null)
             {
                 return NotFound();
@@ -139,23 +134,16 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Konular == null)
+            if (_repo.GetAll() == null)
             {
                 return Problem("Entity set 'Context.Konular'  is null.");
             }
-            var konu = await _context.Konular.FindAsync(id);
+            Konu konu = _repo.GetById(id);
             if (konu != null)
             {
-                _context.Konular.Remove(konu);
-            }
-            
-            await _context.SaveChangesAsync();
+                _repo.Delete(konu);
+            }     
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool KonuExists(int id)
-        {
-          return _context.Konular.Any(e => e.Id == id);
         }
     }
 }

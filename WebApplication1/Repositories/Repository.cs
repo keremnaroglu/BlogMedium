@@ -55,6 +55,7 @@ namespace WebApplication1.Repositories
         {  
             try
             {
+                _db.ChangeTracker.Clear();
                 _db.Entry(entity).State = EntityState.Modified;
                 _db.SaveChanges();
             }
