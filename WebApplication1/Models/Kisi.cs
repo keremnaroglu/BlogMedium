@@ -1,6 +1,8 @@
-﻿namespace WebApplication1.Models
+﻿using WebApplication1.Abstract;
+
+namespace WebApplication1.Models
 {
-    public class Kisi
+    public class Kisi: IEntity
     {
         public int Id { get; set; }
 
