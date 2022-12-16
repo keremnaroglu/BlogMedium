@@ -15,6 +15,7 @@ namespace WebApplication1.Models
         public Kisi Kisi { get; set; }
         public int KisiId { get; set; }
 
+
         public Makale()
         {
             Konular = new HashSet<Konu>();
